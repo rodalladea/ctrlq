@@ -1,7 +1,13 @@
-import { MemoryRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+    MemoryRouter as Router,
+    Routes,
+    Route,
+    Link,
+    useNavigate,
+} from "react-router-dom";
 import Settings from "./components/Settings";
 import { FileText, Folder, Menu, SettingsIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Homepage() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,13 +74,28 @@ function Homepage() {
     );
 }
 
+function AppContent() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Listen for navigation events from the main process
+        window.electronAPI.onNavigateToSettings(() => {
+            navigate("/settings");
+        });
+    }, [navigate]);
+
+    return (
+        <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/settings" element={<Settings />} />
+        </Routes>
+    );
+}
+
 export default function App() {
     return (
         <Router>
-            <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/settings" element={<Settings />} />
-            </Routes>
+            <AppContent />
         </Router>
     );
 }

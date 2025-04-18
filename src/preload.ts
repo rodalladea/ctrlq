@@ -13,4 +13,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     updateConfig: async (config: Partial<AppConfig>): Promise<AppConfig> => {
         return await ipcRenderer.invoke("update-config", config);
     },
+    onNavigateToSettings: (callback: () => void) => {
+        ipcRenderer.on("navigate-to-settings", callback);
+    },
 });
