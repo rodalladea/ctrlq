@@ -29,16 +29,8 @@ let tray: Tray | null = null;
 // Global variable to store the registered shortcut
 let registeredShortcut: string | null = null;
 
-const createTray = (): void => {
-    // Create empty/default icon (you should replace this with your own icon)
-    const icon = nativeImage
-        .createFromPath(path.join(__dirname, "./assets/icon.png"))
-        .resize({ width: 20, height: 20 }); // Resize for system tray
-
-    tray = new Tray(icon);
-    tray.setToolTip("CtrlQ");
-
-    const contextMenu = Menu.buildFromTemplate([
+const createTrayMenu = (accelerator: string) => {
+    return Menu.buildFromTemplate([
         {
             label: "Show/Hide",
             click: () => {
@@ -50,7 +42,7 @@ const createTray = (): void => {
                     mainWindow.focus();
                 }
             },
-            accelerator: "Ctrl+Q",
+            accelerator,
         },
         { type: "separator" },
         {
@@ -70,7 +62,27 @@ const createTray = (): void => {
             },
         },
     ]);
+};
 
+const updateTrayMenu = () => {
+    if (!tray) return;
+    const shortcutKey = configService.getGlobalShortcut();
+    const contextMenu = createTrayMenu(shortcutKey);
+    tray.setContextMenu(contextMenu);
+};
+
+const createTray = (): void => {
+    // Create empty/default icon (you should replace this with your own icon)
+    const icon = nativeImage
+        .createFromPath(path.join(__dirname, "./assets/icon.png"))
+        .resize({ width: 20, height: 20 }); // Resize for system tray
+
+    tray = new Tray(icon);
+    tray.setToolTip("CtrlQ");
+
+    // Initial menu creation with current shortcut
+    const shortcutKey = configService.getGlobalShortcut();
+    const contextMenu = createTrayMenu(shortcutKey);
     tray.setContextMenu(contextMenu);
 
     // Optional: Double click on tray icon to show/hide window
@@ -181,6 +193,8 @@ ipcMain.handle("update-config", (_, newConfig: Partial<AppConfig>) => {
     // Re-register the global shortcut if hotkey changed
     if (newConfig.hotkey) {
         registerGlobalShortcut();
+        // Update tray menu with new shortcut
+        updateTrayMenu();
     }
 
     return updatedConfig;
