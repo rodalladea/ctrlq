@@ -7,6 +7,8 @@ declare global {
             updateConfig: (config: Partial<AppConfig>) => Promise<AppConfig>;
             onNavigateToSettings: (callback: () => void) => void;
             selectFolder: () => Promise<string | undefined>;
+            newFile: (folder: string) => Promise<string>;
+            listFiles: (folder: string) => Promise<string[]>;
         };
     }
 }

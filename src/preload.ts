@@ -19,4 +19,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
     selectFolder: async (): Promise<string | undefined> => {
         return await ipcRenderer.invoke("select-folder");
     },
+    newFile: async (folder: string): Promise<string> => {
+        return await ipcRenderer.invoke("new-file", folder);
+    },
+    listFiles: async (folder: string): Promise<string[]> => {
+        return await ipcRenderer.invoke("list-files", folder);
+    },
 });
