@@ -9,6 +9,7 @@ import {
     Dot,
 } from "lucide-react";
 import { AppConfig } from "../shared/config";
+import Dropdown from "../components/Dropdown";
 
 const Home: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
     const [activeFile, setActiveFile] = useState<string | null>(null);
     const [fileContent, setFileContent] = useState<string | null>(null);
     const [fileChanged, setFileChanged] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -39,6 +41,19 @@ const Home: React.FC = () => {
                 config.defaultFolder
             );
             setFiles((oldFiles) => [...oldFiles, filePath]);
+        }
+    };
+
+    const handleDeleteFile = async (file: string) => {
+        try {
+            await window.electronAPI.deleteFile(file);
+            setFiles((oldFiles) => oldFiles.filter((f) => f !== file));
+            if (activeFile === file) {
+                setActiveFile(null);
+                setFileContent(null);
+            }
+        } catch (error) {
+            console.error("Failed to delete file:", error);
         }
     };
 
@@ -90,20 +105,39 @@ const Home: React.FC = () => {
                     </div>
                     <div className="px-2">
                         {files.map((file) => (
-                            <button
+                            <div
                                 key={file}
                                 onClick={() => handleFileClick(file)}
-                                className={`flex w-full items-center gap-2 cursor-pointer text-sm text-zinc-300 hover:bg-zinc-600 rounded-md px-2 py-1 ${
-                                    activeFile === file
+                                className={`group flex w-full justify-between items-center gap-2 cursor-pointer text-sm text-zinc-300 hover:bg-zinc-600 rounded-md px-2 py-1 ${
+                                    activeFile === file || openDropdown === file
                                         ? "bg-zinc-700"
                                         : "bg-transparent"
                                 }`}
                             >
-                                <FileText className="flex-shrink-0 w-4 h-4 text-zinc-300" />
-                                <span className="truncate">
-                                    {file.split("/").pop()}
-                                </span>
-                            </button>
+                                <div className="flex items-center gap-2">
+                                    <FileText className="flex-shrink-0 w-4 h-4 text-zinc-300" />
+                                    <span className="truncate">
+                                        {file.split("/").pop()}
+                                    </span>
+                                </div>
+                                <div
+                                    className={
+                                        openDropdown === file
+                                            ? "block"
+                                            : "group-hover:block hidden"
+                                    }
+                                >
+                                    <Dropdown
+                                        isOpen={openDropdown === file}
+                                        onOpenChange={(isOpen) =>
+                                            setOpenDropdown(
+                                                isOpen ? file : null
+                                            )
+                                        }
+                                        onDelete={() => handleDeleteFile(file)}
+                                    />
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>

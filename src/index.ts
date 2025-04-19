@@ -139,6 +139,7 @@ const createWindow = (): void => {
 
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.webContents.openDevTools();
 
     // Register the global shortcut from config
     registerGlobalShortcut();
@@ -258,6 +259,11 @@ ipcMain.handle("read-file", async (_, filePath: string) => {
 // IPC handler to write file
 ipcMain.handle("write-file", async (_, filePath: string, content: string) => {
     await fs.writeFile(filePath, content);
+});
+
+// IPC handler to delete file
+ipcMain.handle("delete-file", async (_, filePath: string) => {
+    await fs.unlink(filePath);
 });
 
 // This method will be called when Electron has finished initialization

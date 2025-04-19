@@ -11,6 +11,7 @@ declare global {
             listFiles: (folder: string) => Promise<string[]>;
             readFile: (filePath: string) => Promise<string>;
             writeFile: (filePath: string, content: string) => Promise<void>;
+            deleteFile: (filePath: string) => Promise<void>;
         };
     }
 }
