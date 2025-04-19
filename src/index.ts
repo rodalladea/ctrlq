@@ -222,13 +222,13 @@ ipcMain.handle("select-folder", async () => {
 // IPC handler to create new file
 ipcMain.handle("new-file", async (_, folder: string) => {
     let suffix = 1;
-    let filePath = path.join(folder, "new-file.md");
+    let filePath = path.join(folder, "new-file.txt");
     let fileExists = true;
 
     while (fileExists) {
         try {
             await fs.access(filePath);
-            filePath = path.join(folder, `new-file-${suffix}.md`);
+            filePath = path.join(folder, `new-file-${suffix}.txt`);
             suffix++;
         } catch {
             fileExists = false;
@@ -243,9 +243,9 @@ ipcMain.handle("new-file", async (_, folder: string) => {
 ipcMain.handle("list-files", async (_, folder: string) => {
     const files = await fs.readdir(folder, { withFileTypes: true });
 
-    // accept only .md files
+    // accept only .txt files
     const filteredFiles = files.filter((file) => {
-        return file.name.endsWith(".md");
+        return file.name.endsWith(".txt");
     });
 
     return filteredFiles.map((file) => path.join(folder, file.name));
