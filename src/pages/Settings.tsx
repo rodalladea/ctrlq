@@ -128,7 +128,7 @@ const Settings: React.FC = () => {
                 <h2 className="text-xl font-bold">Settings</h2>
                 <Link
                     to="/"
-                    className="text-gray-300 hover:text-white text-sm flex items-center"
+                    className="text-zinc-300 hover:text-white text-sm flex items-center"
                 >
                     <svg
                         className="w-4 h-4 mr-1"
@@ -149,45 +149,45 @@ const Settings: React.FC = () => {
                 <h3 className="text-lg font-semibold mb-2">Global Hotkey</h3>
                 <div className="flex flex-col space-y-2">
                     <div
-                        className="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer"
+                        className="flex items-center justify-between p-2 bg-zinc-700 rounded cursor-pointer"
                         onClick={recordHotkey}
                     >
                         <span>Hotkey to show/hide:</span>
-                        <div className="p-1 bg-gray-600 rounded flex items-center space-x-1">
+                        <div className="p-1 bg-zinc-600 rounded flex items-center space-x-1">
                             {modifiers.ctrl && (
-                                <span className="px-1 bg-gray-500 rounded">
+                                <span className="px-1 bg-zinc-500 rounded">
                                     Ctrl
                                 </span>
                             )}
                             {modifiers.alt && (
-                                <span className="px-1 bg-gray-500 rounded">
+                                <span className="px-1 bg-zinc-500 rounded">
                                     Alt
                                 </span>
                             )}
                             {modifiers.shift && (
-                                <span className="px-1 bg-gray-500 rounded">
+                                <span className="px-1 bg-zinc-500 rounded">
                                     Shift
                                 </span>
                             )}
                             {modifiers.meta && (
-                                <span className="px-1 bg-gray-500 rounded">
+                                <span className="px-1 bg-zinc-500 rounded">
                                     ⌘
                                 </span>
                             )}
                             {key !== "Press a key..." && (
-                                <span className="px-1 bg-gray-500 rounded">
+                                <span className="px-1 bg-zinc-500 rounded">
                                     {key}
                                 </span>
                             )}
                             {key === "Press a key..." && (
-                                <span className="text-gray-400 italic">
+                                <span className="text-zinc-400 italic">
                                     {key}
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-zinc-400">
                         Click above to record a new hotkey combination. Press
                         any letter key with modifiers.
                     </p>
