@@ -110,6 +110,7 @@ const createWindow = (): void => {
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
+        icon: path.join(__dirname, "./assets/icon.png"),
         height: windowHeight,
         width: windowWidth,
         x: xPosition,
