@@ -5,7 +5,7 @@ import {
     Link,
     useNavigate,
 } from "react-router-dom";
-import Settings from "./components/Settings";
+import Settings from "./pages/Settings";
 import { FileText, Folder, Menu, SettingsIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
