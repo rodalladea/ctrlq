@@ -7,6 +7,7 @@ import {
     Tray,
     Menu,
     nativeImage,
+    dialog,
 } from "electron";
 import { configService } from "./services/config";
 import { AppConfig } from "./shared/config";
@@ -199,6 +200,21 @@ ipcMain.handle("update-config", (_, newConfig: Partial<AppConfig>) => {
     }
 
     return updatedConfig;
+});
+
+// IPC handler to select folder
+ipcMain.handle("select-folder", async () => {
+    if (!mainWindow) return;
+
+    const result = await dialog.showOpenDialog(mainWindow, {
+        properties: ["openDirectory"],
+    });
+
+    if (!result.canceled && result.filePaths.length > 0) {
+        return result.filePaths[0];
+    }
+
+    return undefined;
 });
 
 // This method will be called when Electron has finished initialization

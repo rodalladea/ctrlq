@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Folder, FileText, SettingsIcon, Menu } from "lucide-react";
+import { AppConfig } from "../shared/config";
 
 const Home: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [config, setConfig] = useState<AppConfig | null>(null);
+
+    useEffect(() => {
+        const loadConfig = async () => {
+            const config = await window.electronAPI.getConfig();
+            setConfig(config);
+        };
+        loadConfig();
+    }, []);
 
     return (
         <div className="w-full h-screen flex overflow-hidden">
@@ -18,7 +28,10 @@ const Home: React.FC = () => {
                             strokeWidth={3}
                             className="w-4 h-4 text-zinc-300"
                         />
-                        <span className="text-zinc-300">Folder</span>
+                        <span className="text-zinc-300">
+                            {config?.defaultFolder?.split("/").pop() ||
+                                "Folder"}
+                        </span>
                     </div>
                     <div className="px-2">
                         <Link

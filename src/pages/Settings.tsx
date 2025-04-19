@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppConfig } from "../shared/config";
+import { ArrowLeft, Folder } from "lucide-react";
 
 const Settings: React.FC = () => {
     const [config, setConfig] = useState<AppConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [key, setKey] = useState("");
+    const [defaultFolder, setDefaultFolder] = useState("");
     const [modifiers, setModifiers] = useState({
         ctrl: false,
         alt: false,
@@ -20,6 +22,7 @@ const Settings: React.FC = () => {
                 const config = await window.electronAPI.getConfig();
                 setConfig(config);
                 setKey(config.hotkey.key);
+                setDefaultFolder(config.defaultFolder || "");
 
                 const safeModifiers = {
                     ctrl: Boolean(config.hotkey.modifiers.ctrl),
@@ -49,6 +52,7 @@ const Settings: React.FC = () => {
                     key,
                     modifiers,
                 },
+                defaultFolder,
             };
 
             const updatedConfig = await window.electronAPI.updateConfig(
@@ -59,6 +63,17 @@ const Settings: React.FC = () => {
             console.error("Failed to save config:", error);
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleSelectFolder = async () => {
+        try {
+            const result = await window.electronAPI.selectFolder();
+            if (result) {
+                setDefaultFolder(result);
+            }
+        } catch (error) {
+            console.error("Failed to select folder:", error);
         }
     };
 
@@ -126,50 +141,72 @@ const Settings: React.FC = () => {
         <div className="p-4 bg-opacity-95 text-white max-w-md mx-auto">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Settings</h2>
-                <Link
-                    to="/"
-                    className="text-zinc-300 hover:text-white text-sm flex items-center"
-                >
-                    <svg
-                        className="w-4 h-4 mr-1"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                <div className="flex items-center space-x-3">
+                    <Link
+                        to="/"
+                        className="text-zinc-300 hover:text-white text-sm flex items-center"
                     >
-                        <path
-                            fillRule="evenodd"
-                            d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                    Back
-                </Link>
+                        <ArrowLeft strokeWidth={3} className="w-4 h-4 mr-1" />
+                        Back
+                    </Link>
+                    <button
+                        className="cursor-pointer px-2 py-1 text-sm text-zinc-900 bg-zinc-100 hover:bg-zinc-200 rounded disabled:opacity-50"
+                        onClick={saveConfig}
+                        disabled={saving || key === "Press a key..."}
+                    >
+                        {saving ? "Saving..." : "Save"}
+                    </button>
+                </div>
             </div>
 
             <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Global Hotkey</h3>
+                <h3 className="text-lg font-semibold">Default Folder</h3>
+                <p className="text-xs text-zinc-400 mb-3">
+                    The default folder to open when the app is launched.
+                </p>
+                <div className="flex items-center space-x-2">
+                    <div className="w-full p-2 text-sm bg-zinc-800 rounded">
+                        {defaultFolder || "Select a folder..."}
+                    </div>
+                    <button
+                        onClick={handleSelectFolder}
+                        className="px-3 py-2 bg-zinc-700 hover:bg-zinc-600 rounded text-sm flex items-center"
+                    >
+                        <Folder className="w-4 h-4 mr-1" />
+                        Browse
+                    </button>
+                </div>
+            </div>
+
+            <div className="mb-4">
+                <h3 className="text-lg font-semibold">Global Hotkeys</h3>
+                <p className="text-xs text-zinc-400 mb-3">
+                    Click on the respective hotkey to record a new hotkey
+                    combination.
+                </p>
                 <div className="flex flex-col space-y-2">
                     <div
-                        className="flex items-center justify-between p-2 bg-zinc-700 rounded cursor-pointer"
+                        className="flex items-center justify-between p-2 bg-zinc-800 rounded cursor-pointer"
                         onClick={recordHotkey}
                     >
                         <span>Hotkey to show/hide:</span>
-                        <div className="p-1 bg-zinc-600 rounded flex items-center space-x-1">
-                            {modifiers.ctrl && (
+                        <div className="p-1 rounded flex items-center space-x-1">
+                            {modifiers.ctrl && key !== "Press a key..." && (
                                 <span className="px-1 bg-zinc-500 rounded">
                                     Ctrl
                                 </span>
                             )}
-                            {modifiers.alt && (
+                            {modifiers.alt && key !== "Press a key..." && (
                                 <span className="px-1 bg-zinc-500 rounded">
-                                    Alt
+                                    Option
                                 </span>
                             )}
-                            {modifiers.shift && (
+                            {modifiers.shift && key !== "Press a key..." && (
                                 <span className="px-1 bg-zinc-500 rounded">
                                     Shift
                                 </span>
                             )}
-                            {modifiers.meta && (
+                            {modifiers.meta && key !== "Press a key..." && (
                                 <span className="px-1 bg-zinc-500 rounded">
                                     ⌘
                                 </span>
@@ -186,22 +223,7 @@ const Settings: React.FC = () => {
                             )}
                         </div>
                     </div>
-
-                    <p className="text-xs text-zinc-400">
-                        Click above to record a new hotkey combination. Press
-                        any letter key with modifiers.
-                    </p>
                 </div>
-            </div>
-
-            <div className="mt-6">
-                <button
-                    className="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium disabled:opacity-50"
-                    onClick={saveConfig}
-                    disabled={saving || key === "Press a key..."}
-                >
-                    {saving ? "Saving..." : "Save Settings"}
-                </button>
             </div>
         </div>
     );

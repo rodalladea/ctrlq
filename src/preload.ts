@@ -16,4 +16,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     onNavigateToSettings: (callback: () => void) => {
         ipcRenderer.on("navigate-to-settings", callback);
     },
+    selectFolder: async (): Promise<string | undefined> => {
+        return await ipcRenderer.invoke("select-folder");
+    },
 });

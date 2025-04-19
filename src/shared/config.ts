@@ -12,6 +12,7 @@ export interface AppConfig {
             meta?: boolean;
         };
     };
+    defaultFolder?: string;
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -24,6 +25,7 @@ export const DEFAULT_CONFIG: AppConfig = {
             meta: false,
         },
     },
+    defaultFolder: "",
 };
 
 /**

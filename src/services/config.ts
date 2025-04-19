@@ -77,6 +77,10 @@ class ConfigService {
             };
         }
 
+        if (source.defaultFolder !== undefined) {
+            result.defaultFolder = source.defaultFolder;
+        }
+
         return result;
     }
 

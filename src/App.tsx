@@ -12,6 +12,14 @@ function AppContent() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const loadConfig = async () => {
+            const config = await window.electronAPI.getConfig();
+            if (!config.defaultFolder) {
+                navigate("/settings");
+            }
+        };
+        loadConfig();
+
         // Listen for navigation events from the main process
         window.electronAPI.onNavigateToSettings(() => {
             navigate("/settings");
