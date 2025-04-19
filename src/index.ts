@@ -266,6 +266,11 @@ ipcMain.handle("delete-file", async (_, filePath: string) => {
     await fs.unlink(filePath);
 });
 
+// IPC handler to rename file
+ipcMain.handle("rename-file", async (_, oldPath: string, newPath: string) => {
+    await fs.rename(oldPath, newPath);
+});
+
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
     createWindow();

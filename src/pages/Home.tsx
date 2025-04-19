@@ -44,7 +44,11 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleDeleteFile = async (file: string) => {
+    const handleDeleteFile = async (
+        e: React.MouseEvent<HTMLButtonElement>,
+        file: string
+    ) => {
+        e.stopPropagation();
         try {
             await window.electronAPI.deleteFile(file);
             setFiles((oldFiles) => oldFiles.filter((f) => f !== file));
@@ -54,6 +58,32 @@ const Home: React.FC = () => {
             }
         } catch (error) {
             console.error("Failed to delete file:", error);
+        }
+    };
+
+    const handleRenameFile = async (file: string, newName: string) => {
+        try {
+            const dirPath = file.substring(0, file.lastIndexOf("/") + 1);
+            const newPath = dirPath + newName;
+
+            // Save content if it's the active file
+            if (activeFile === file && fileContent !== null && fileChanged) {
+                await window.electronAPI.writeFile(file, fileContent);
+            }
+
+            await window.electronAPI.renameFile(file, newPath);
+
+            // Update files list
+            setFiles((oldFiles) =>
+                oldFiles.map((f) => (f === file ? newPath : f))
+            );
+
+            // Update active file if needed
+            if (activeFile === file) {
+                setActiveFile(newPath);
+            }
+        } catch (error) {
+            console.error("Failed to rename file:", error);
         }
     };
 
@@ -134,7 +164,13 @@ const Home: React.FC = () => {
                                                 isOpen ? file : null
                                             )
                                         }
-                                        onDelete={() => handleDeleteFile(file)}
+                                        onDelete={(e) =>
+                                            handleDeleteFile(e, file)
+                                        }
+                                        onRename={(newName) =>
+                                            handleRenameFile(file, newName)
+                                        }
+                                        fileName={file.split("/").pop() || ""}
                                     />
                                 </div>
                             </div>

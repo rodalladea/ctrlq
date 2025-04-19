@@ -34,4 +34,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     deleteFile: async (filePath: string): Promise<void> => {
         return await ipcRenderer.invoke("delete-file", filePath);
     },
+    renameFile: async (oldPath: string, newPath: string): Promise<void> => {
+        return await ipcRenderer.invoke("rename-file", oldPath, newPath);
+    },
 });

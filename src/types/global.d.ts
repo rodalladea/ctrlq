@@ -12,6 +12,7 @@ declare global {
             readFile: (filePath: string) => Promise<string>;
             writeFile: (filePath: string, content: string) => Promise<void>;
             deleteFile: (filePath: string) => Promise<void>;
+            renameFile: (oldPath: string, newPath: string) => Promise<void>;
         };
     }
 }
