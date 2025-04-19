@@ -84,7 +84,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    className="absolute top-3 left-3 mt-1 w-40 bg-zinc-800 rounded-md shadow-lg z-50"
+                    className="absolute top-4 right-3 mt-1 w-40 bg-zinc-800 rounded-md shadow-lg z-50"
                 >
                     <div className="p-1 space-y-1">
                         <button
@@ -109,7 +109,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 </div>
             )}
             {isRenaming && (
-                <div className="absolute top-3 left-3 mt-1 z-50 w-full min-w-40">
+                <div className="absolute top-4 right-3 mt-1 z-50 w-full min-w-40">
                     <input
                         ref={inputRef}
                         type="text"

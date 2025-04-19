@@ -7,6 +7,7 @@ import {
 import Settings from "./pages/Settings";
 import { useEffect } from "react";
 import Home from "./pages/Home";
+import Excalidraw from "./pages/Excalidraw";
 
 function AppContent() {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ function AppContent() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/excalidraw" element={<Excalidraw />} />
         </Routes>
     );
 }
