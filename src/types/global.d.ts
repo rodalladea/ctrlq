@@ -9,6 +9,8 @@ declare global {
             selectFolder: () => Promise<string | undefined>;
             newFile: (folder: string) => Promise<string>;
             listFiles: (folder: string) => Promise<string[]>;
+            readFile: (filePath: string) => Promise<string>;
+            writeFile: (filePath: string, content: string) => Promise<void>;
         };
     }
 }

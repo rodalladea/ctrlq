@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Folder, FileText, SettingsIcon, Menu, SquarePen } from "lucide-react";
+import {
+    Folder,
+    FileText,
+    SettingsIcon,
+    Menu,
+    SquarePen,
+    Dot,
+} from "lucide-react";
 import { AppConfig } from "../shared/config";
 
 const Home: React.FC = () => {
@@ -8,6 +15,8 @@ const Home: React.FC = () => {
     const [config, setConfig] = useState<AppConfig | null>(null);
     const [files, setFiles] = useState<string[]>([]);
     const [activeFile, setActiveFile] = useState<string | null>(null);
+    const [fileContent, setFileContent] = useState<string | null>(null);
+    const [fileChanged, setFileChanged] = useState(false);
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -33,8 +42,27 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleFileClick = (file: string) => {
+    const handleFileClick = async (file: string) => {
         setActiveFile(file);
+        const content = await window.electronAPI.readFile(file);
+        setFileContent(content);
+        setFileChanged(false);
+        setIsMenuOpen(false);
+    };
+
+    const handleSaveFile = async (
+        e: React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
+        if (e.key === "s" && e.metaKey) {
+            e.preventDefault(); // Prevent default browser save action
+            if (activeFile) {
+                await window.electronAPI.writeFile(
+                    activeFile,
+                    fileContent || ""
+                );
+                setFileChanged(false);
+            }
+        }
     };
 
     return (
@@ -102,15 +130,24 @@ const Home: React.FC = () => {
                     >
                         <Menu strokeWidth={2} className="w-6 h-6" />
                     </button>
-                    <span className="text-zinc-300">
+                    <div className="text-zinc-300 flex items-center gap-1">
                         {activeFile?.split("/").pop()}
-                    </span>
+                        {fileChanged && (
+                            <Dot strokeWidth={10} className="w-4 h-4" />
+                        )}
+                    </div>
                 </div>
                 <div className="flex-1 h-full">
                     <textarea
                         className="bg-transparent w-full h-full p-3 pt-0 text-white outline-none resize-none rounded-md shadow-md"
                         autoFocus
                         spellCheck={false}
+                        value={fileContent || ""}
+                        onChange={(e) => {
+                            setFileContent(e.target.value);
+                            setFileChanged(true);
+                        }}
+                        onKeyDown={handleSaveFile}
                     />
                 </div>
             </div>

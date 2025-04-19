@@ -250,6 +250,16 @@ ipcMain.handle("list-files", async (_, folder: string) => {
     return filteredFiles.map((file) => path.join(folder, file.name));
 });
 
+// IPC handler to read file
+ipcMain.handle("read-file", async (_, filePath: string) => {
+    return await fs.readFile(filePath, "utf8");
+});
+
+// IPC handler to write file
+ipcMain.handle("write-file", async (_, filePath: string, content: string) => {
+    await fs.writeFile(filePath, content);
+});
+
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
     createWindow();
